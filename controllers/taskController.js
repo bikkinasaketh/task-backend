@@ -13,9 +13,26 @@ exports.getTasks = async (req, res) => {
 };
 
 // Update Task
+// controllers/taskController.js
+
 exports.updateTask = async (req, res) => {
-  const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(task);
+  try {
+    const { title, description, completed } = req.body;
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      { title, description, completed },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 };
 
 // Delete Task
